@@ -7,8 +7,8 @@ import FinancialManagement from './components/FinancialManagement';
 import DailyRecords from './components/DailyRecords';
 import SalesManagement from './components/SalesManagement';
 import EmployeesManagement from './components/EmployeesManagement';
-import BackupRestore from './components/BackupRestore';
 import Reports from './components/Reports';
+import BackupRestore from './components/BackupRestore';
 import Settings from './components/Settings';
 import Navbar from './components/Navbar';
 import Sidebar from './components/Sidebar';
@@ -17,6 +17,14 @@ import OfflineIndicator from './components/OfflineIndicator';
 import WelcomeModal from './components/WelcomeModal';
 import './App.css';
 
+// مكون SalesManagement مبسط (لأنه مش مفصل في الطلب)
+const SalesManagement = () => (
+  <div className="p-6">
+    <h1 className="text-2xl font-bold mb-4">إدارة المبيعات (تحت التطوير)</h1>
+    <p>سيتم إضافة هذه الصفحة قريباً...</p>
+  </div>
+);
+
 function App() {
   const [currentPage, setCurrentPage] = useState('dashboard');
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -24,7 +32,6 @@ function App() {
   const [isOnline, setIsOnline] = useState(navigator.onLine);
   const [showWelcomeModal, setShowWelcomeModal] = useState(false);
   
-  // هيكل البيانات الرئيسي للتطبيق
   const [appData, setAppData] = useState({
     cycles: [],
     inventory: [],
@@ -37,7 +44,6 @@ function App() {
     settings: {}
   });
 
-  // تحميل البيانات من التخزين المحلي عند التحميل
   useEffect(() => {
     const savedData = localStorage.getItem('douajny_app_data');
     if (savedData) {
@@ -45,7 +51,6 @@ function App() {
         setAppData(JSON.parse(savedData));
       } catch (error) {
         console.error('خطأ في تحميل البيانات:', error);
-        // إنشاء بيانات تجريبية أولية
         initializeSampleData();
       }
     } else {
@@ -53,29 +58,13 @@ function App() {
       setShowWelcomeModal(true);
     }
 
-    // تحقق من الاتصال بالإنترنت
     window.addEventListener('online', () => setIsOnline(true));
     window.addEventListener('offline', () => setIsOnline(false));
 
-    // تحديث البيانات تلقائياً كل 5 دقائق
-    const interval = setInterval(syncData, 5 * 60 * 1000);
-
-    // إشعارات نظامية
-    const today = new Date();
-    const hasDailyRecord = appData.dailyRecords.some(record => 
-      new Date(record.date).toDateString() === today.toDateString()
-    );
-    
-    if (!hasDailyRecord && today.getHours() >= 8) {
-      addNotification({
-        id: Date.now(),
-        type: 'reminder',
-        title: 'تذكير بالسجل اليومي',
-        message: 'لم تقم بإضافة السجل اليومي بعد',
-        time: new Date().toLocaleTimeString('ar-EG'),
-        read: false
-      });
-    }
+    const interval = setInterval(() => {
+      // مزامنة تلقائية كل 5 دقائق
+      console.log('مزامنة تلقائية...');
+    }, 5 * 60 * 1000);
 
     return () => {
       window.removeEventListener('online', () => setIsOnline(true));
@@ -84,7 +73,6 @@ function App() {
     };
   }, []);
 
-  // حفظ البيانات تلقائياً عند التغيير
   useEffect(() => {
     const saveTimeout = setTimeout(() => {
       localStorage.setItem('douajny_app_data', JSON.stringify(appData));
@@ -94,7 +82,6 @@ function App() {
     return () => clearTimeout(saveTimeout);
   }, [appData]);
 
-  // تهيئة بيانات تجريبية
   const initializeSampleData = () => {
     const sampleData = {
       cycles: [
@@ -136,17 +123,6 @@ function App() {
           supplier: 'شركة الأعلاف المتحدة',
           lastRestock: '2024-03-15',
           costPerUnit: 1.8
-        },
-        {
-          id: 2,
-          name: 'فيتامين AD3E',
-          type: 'دواء',
-          quantity: 50,
-          unit: 'لتر',
-          minQuantity: 10,
-          supplier: 'مكتبة الدواجن',
-          lastRestock: '2024-03-10',
-          costPerUnit: 120
         }
       ],
       dailyRecords: [
@@ -163,37 +139,15 @@ function App() {
           notes: 'حالة الطيور جيدة'
         }
       ],
-      // ... باقي البيانات
+      healthRecords: [],
+      financialRecords: [],
+      employees: [],
+      sales: [],
+      settings: {}
     };
     setAppData(sampleData);
   };
 
-  // مزامنة البيانات
-  const syncData = async () => {
-    if (!isOnline) return;
-    
-    try {
-      // هنا يمكن إضافة منطق المزامنة مع السيرفر
-      console.log('مزامنة البيانات...');
-      addNotification({
-        id: Date.now(),
-        type: 'sync',
-        title: 'مزامنة ناجحة',
-        message: 'تم تحديث البيانات بنجاح',
-        time: new Date().toLocaleTimeString('ar-EG'),
-        read: false
-      });
-    } catch (error) {
-      console.error('خطأ في المزامنة:', error);
-    }
-  };
-
-  // إضافة إشعار جديد
-  const addNotification = (notification) => {
-    setNotifications(prev => [notification, ...prev.slice(0, 9)]);
-  };
-
-  // تحديث البيانات
   const updateData = (key, data) => {
     setAppData(prev => ({
       ...prev,
@@ -201,9 +155,12 @@ function App() {
     }));
   };
 
-  // عرض الصفحة الحالية
+  const addNotification = (notification) => {
+    setNotifications(prev => [notification, ...prev.slice(0, 9)]);
+  };
+
   const renderPage = () => {
-    const props = {
+    const commonProps = {
       data: appData,
       updateData,
       addNotification,
@@ -212,29 +169,29 @@ function App() {
 
     switch(currentPage) {
       case 'dashboard':
-        return <Dashboard {...props} />;
+        return <Dashboard {...commonProps} />;
       case 'cycles':
-        return <CyclesManagement {...props} />;
+        return <CyclesManagement {...commonProps} />;
       case 'inventory':
-        return <InventoryManagement {...props} />;
+        return <InventoryManagement {...commonProps} />;
       case 'health':
-        return <HealthManagement {...props} />;
+        return <HealthManagement {...commonProps} />;
       case 'financial':
-        return <FinancialManagement {...props} />;
+        return <FinancialManagement {...commonProps} />;
       case 'daily':
-        return <DailyRecords {...props} />;
+        return <DailyRecords {...commonProps} />;
       case 'sales':
-        return <SalesManagement {...props} />;
+        return <SalesManagement {...commonProps} />;
       case 'employees':
-        return <EmployeesManagement {...props} />;
+        return <EmployeesManagement {...commonProps} />;
       case 'reports':
-        return <Reports {...props} />;
+        return <Reports {...commonProps} />;
       case 'backup':
-        return <BackupRestore {...props} />;
+        return <BackupRestore {...commonProps} />;
       case 'settings':
-        return <Settings {...props} />;
+        return <Settings {...commonProps} />;
       default:
-        return <Dashboard {...props} />;
+        return <Dashboard {...commonProps} />;
     }
   };
 
