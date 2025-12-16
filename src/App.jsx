@@ -6,7 +6,7 @@ import HealthManagement from './components/HealthManagement';
 import FinancialManagement from './components/FinancialManagement';
 import DailyRecords from './components/DailyRecords';
 import SalesManagement from './components/SalesManagement';
-import EmployeesManagement from './components/EmployeesManagement';
+//import EmployeesManagement from './components/EmployeesManagement';
 import Reports from './components/Reports';
 import BackupRestore from './components/BackupRestore';
 import Settings from './components/Settings';
