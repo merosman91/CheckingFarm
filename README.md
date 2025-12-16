@@ -55,3 +55,42 @@
 ```bash
 git clone https://github.com/yourusername/douajny.git
 cd douajny
+
+دواجني/
+├── 📁 public/
+│   ├── icon-512.png
+│   ├── icon-192.png
+│   ├── icon-144.png
+│   ├── manifest.json
+│   └── sw.js
+│
+├── 📁 src/
+│   ├── 📁 components/
+│   │   ├── Navbar.jsx
+│   │   ├── Sidebar.jsx
+│   │   ├── Dashboard.jsx
+│   │   ├── CyclesManagement.jsx
+│   │   ├── DailyRecords.jsx
+│   │   ├── InventoryManagement.jsx
+│   │   ├── HealthManagement.jsx
+│   │   ├── FinancialManagement.jsx
+│   │   ├── BackupRestore.jsx
+│   │   ├── SalesManagement.jsx
+│   │   ├── EmployeesManagement.jsx
+│   │   ├── Reports.jsx
+│   │   ├── Settings.jsx
+│   │   ├── WelcomeModal.jsx
+│   │   ├── NotificationCenter.jsx
+│   │   └── OfflineIndicator.jsx
+│   │
+│   ├── App.jsx           # ✅ المكون الرئيسي هنا
+│   ├── main.jsx
+│   ├── index.css
+│   └── App.css
+│
+├── index.html
+├── package.json
+├── vite.config.js
+├── tailwind.config.js
+├── postcss.config.js
+└── README.md
