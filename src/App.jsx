@@ -18,12 +18,12 @@ import WelcomeModal from './components/WelcomeModal';
 import './App.css';
 
 // مكون SalesManagement مبسط (لأنه مش مفصل في الطلب)
-const SalesManagement = () => (
-  <div className="p-6">
-    <h1 className="text-2xl font-bold mb-4">إدارة المبيعات (تحت التطوير)</h1>
-    <p>سيتم إضافة هذه الصفحة قريباً...</p>
-  </div>
-);
+//const SalesManagement = () => (
+ // <div className="p-6">
+   // <h1 className="text-2xl font-bold mb-4">إدارة المبيعات (تحت التطوير)</h1>
+   // <p>سيتم إضافة هذه الصفحة قريباً...</p>
+ // </div>
+//);
 
 function App() {
   const [currentPage, setCurrentPage] = useState('dashboard');
