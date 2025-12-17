@@ -1,19 +1,17 @@
 {
   "name": "douajny-app",
-  "private": true,
   "version": "1.0.0",
+  "private": true,
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview"
-    "vercel-build": "vite build"
   },
   "dependencies": {
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-router-dom": "^6.20.0",
-    "lucide-react": "^0.309.0"
+    "react-router-dom": "^6.20.0"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^4.2.0",
@@ -21,6 +19,5 @@
     "postcss": "^8.4.32",
     "tailwindcss": "^3.3.6",
     "vite": "^5.0.0"
-  },
-  "description": "تطبيق إدارة مزارع الدواجن - Douajny App"
+  }
 }
