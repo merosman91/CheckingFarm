@@ -1,22 +1,4 @@
 import React, { useState, useEffect } from 'react'
-import { 
-  Download,
-  Printer,
-  Filter,
-  Calendar,
-  TrendingUp,
-  TrendingDown,
-  DollarSign,
-  Users,
-  Package,
-  Heart,
-  BarChart3,
-  PieChart,
-  LineChart,
-  FileText,
-  Eye,
-  Share2
-} from 'lucide-react'
 
 const Reports = () => {
   const [reports, setReports] = useState([])
@@ -74,14 +56,24 @@ const Reports = () => {
     }
   }, [])
 
+  // دالة مساعدة لعرض الأيقونات
+  const Icon = ({ name, className = "w-5 h-5", ...props }) => (
+    <img 
+      src={`/icons/${name}.svg`} 
+      alt={name}
+      className={className}
+      {...props}
+    />
+  )
+
   const reportTypes = [
-    { id: 'all', label: 'جميع التقارير', icon: FileText },
-    { id: 'sales', label: 'تقارير المبيعات', icon: DollarSign },
-    { id: 'expenses', label: 'تقارير المصروفات', icon: TrendingDown },
-    { id: 'health', label: 'تقارير الصحة', icon: Heart },
-    { id: 'inventory', label: 'تقارير المخزون', icon: Package },
-    { id: 'employees', label: 'تقارير الموظفين', icon: Users },
-    { id: 'cycles', label: 'تقارير الدورات', icon: TrendingUp }
+    { id: 'all', label: 'جميع التقارير', icon: 'file-text' },
+    { id: 'sales', label: 'تقارير المبيعات', icon: 'dollar-sign' },
+    { id: 'expenses', label: 'تقارير المصروفات', icon: 'trending-down' },
+    { id: 'health', label: 'تقارير الصحة', icon: 'heart' },
+    { id: 'inventory', label: 'تقارير المخزون', icon: 'package' },
+    { id: 'employees', label: 'تقارير الموظفين', icon: 'users' },
+    { id: 'cycles', label: 'تقارير الدورات', icon: 'trending-up' }
   ]
 
   const generateSalesReport = () => {
@@ -137,11 +129,11 @@ const Reports = () => {
         </div>
         <div className="flex items-center space-x-3 space-x-reverse">
           <button className="btn-primary flex items-center">
-            <Printer size={18} className="ml-2" />
+            <Icon name="printer" className="w-4 h-4 ml-2" />
             طباعة التقارير
           </button>
           <button className="btn-secondary flex items-center">
-            <Download size={18} className="ml-2" />
+            <Icon name="download" className="w-4 h-4 ml-2" />
             تصدير البيانات
           </button>
         </div>
@@ -199,7 +191,7 @@ const Reports = () => {
             onClick={generateSalesReport}
             className="p-4 border border-blue-200 rounded-lg bg-blue-50 hover:bg-blue-100 transition-colors flex flex-col items-center"
           >
-            <DollarSign size={24} className="text-blue-600 mb-2" />
+            <Icon name="dollar-sign" className="w-6 h-6 text-blue-600 mb-2" />
             <span className="font-medium text-blue-700">تقرير مبيعات</span>
           </button>
 
@@ -207,17 +199,17 @@ const Reports = () => {
             onClick={generateFinancialReport}
             className="p-4 border border-green-200 rounded-lg bg-green-50 hover:bg-green-100 transition-colors flex flex-col items-center"
           >
-            <TrendingUp size={24} className="text-green-600 mb-2" />
+            <Icon name="trending-up" className="w-6 h-6 text-green-600 mb-2" />
             <span className="font-medium text-green-700">تقرير مالي</span>
           </button>
 
           <button className="p-4 border border-red-200 rounded-lg bg-red-50 hover:bg-red-100 transition-colors flex flex-col items-center">
-            <Heart size={24} className="text-red-600 mb-2" />
+            <Icon name="heart" className="w-6 h-6 text-red-600 mb-2" />
             <span className="font-medium text-red-700">تقرير صحة</span>
           </button>
 
           <button className="p-4 border border-purple-200 rounded-lg bg-purple-50 hover:bg-purple-100 transition-colors flex flex-col items-center">
-            <Package size={24} className="text-purple-600 mb-2" />
+            <Icon name="package" className="w-6 h-6 text-purple-600 mb-2" />
             <span className="font-medium text-purple-700">تقرير مخزون</span>
           </button>
         </div>
@@ -236,7 +228,7 @@ const Reports = () => {
                   : 'border-transparent text-gray-500 hover:text-gray-700'
               }`}
             >
-              <type.icon size={18} className="ml-2" />
+              <Icon name={type.icon} className="w-4 h-4 ml-2" />
               {type.label}
             </button>
           ))}
@@ -251,14 +243,14 @@ const Reports = () => {
               <h2 className="text-xl font-semibold text-gray-800">التقارير المتاحة</h2>
               <div className="flex items-center space-x-2 space-x-reverse">
                 <button className="p-2 border border-gray-300 rounded-lg hover:bg-gray-50">
-                  <Filter size={20} className="text-gray-600" />
+                  <Icon name="filter" className="w-5 h-5 text-gray-600" />
                 </button>
               </div>
             </div>
 
             {filteredReports.length === 0 ? (
               <div className="text-center py-12">
-                <FileText className="mx-auto h-12 w-12 text-gray-400" />
+                <Icon name="file-text" className="mx-auto w-12 h-12 text-gray-400" />
                 <h3 className="mt-4 text-lg font-medium text-gray-900">لا توجد تقارير</h3>
                 <p className="mt-2 text-gray-500">قم بإنشاء تقرير جديد أو غيّر معايير البحث.</p>
               </div>
@@ -276,17 +268,17 @@ const Reports = () => {
                             report.type === 'inventory' ? 'bg-purple-50 text-purple-600' :
                             'bg-gray-50 text-gray-600'
                           }`}>
-                            {report.type === 'sales' && <DollarSign size={20} />}
-                            {report.type === 'expenses' && <TrendingDown size={20} />}
-                            {report.type === 'health' && <Heart size={20} />}
-                            {report.type === 'inventory' && <Package size={20} />}
+                            {report.type === 'sales' && <Icon name="dollar-sign" className="w-5 h-5" />}
+                            {report.type === 'expenses' && <Icon name="trending-down" className="w-5 h-5" />}
+                            {report.type === 'health' && <Icon name="heart" className="w-5 h-5" />}
+                            {report.type === 'inventory' && <Icon name="package" className="w-5 h-5" />}
                           </div>
                           <div className="flex-1">
                             <h3 className="font-medium text-gray-800">{report.title}</h3>
                             <p className="text-sm text-gray-600 mt-1">{report.description}</p>
                             <div className="flex items-center mt-2 space-x-4 space-x-reverse">
                               <span className="text-sm text-gray-500">
-                                <Calendar size={14} className="inline ml-1" />
+                                <Icon name="calendar" className="w-3 h-3 inline ml-1" />
                                 {report.date}
                               </span>
                               <span className={`text-sm ${
@@ -306,13 +298,13 @@ const Reports = () => {
                           className="text-blue-600 hover:text-blue-900"
                           onClick={() => setSelectedReport(report)}
                         >
-                          <Eye size={18} />
+                          <Icon name="eye" className="w-4 h-4" />
                         </button>
                         <button className="text-gray-600 hover:text-gray-900">
-                          <Download size={18} />
+                          <Icon name="download" className="w-4 h-4" />
                         </button>
                         <button className="text-gray-600 hover:text-gray-900">
-                          <Printer size={18} />
+                          <Icon name="printer" className="w-4 h-4" />
                         </button>
                       </div>
                     </div>
@@ -495,11 +487,11 @@ const Reports = () => {
                   إغلاق
                 </button>
                 <button className="btn-primary px-6 py-3 flex items-center">
-                  <Download size={18} className="ml-2" />
+                  <Icon name="download" className="w-4 h-4 ml-2" />
                   تحميل PDF
                 </button>
                 <button className="btn-secondary px-6 py-3 flex items-center">
-                  <Printer size={18} className="ml-2" />
+                  <Icon name="printer" className="w-4 h-4 ml-2" />
                   طباعة
                 </button>
               </div>
