@@ -1,37 +1,21 @@
 import React, { useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
-import { 
-  Home, 
-  Layers, 
-  Package, 
-  Heart, 
-  DollarSign, 
-  Calendar, 
-  ShoppingCart, 
-  Users, 
-  BarChart2, 
-  Settings,
-  Menu,
-  X,
-  Bell,
-  User
-} from 'lucide-react'
 
 const Layout = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const location = useLocation()
 
   const menuItems = [
-    { path: '/dashboard', icon: Home, label: 'لوحة التحكم' },
-    { path: '/cycles', icon: Layers, label: 'إدارة الدورات' },
-    { path: '/inventory', icon: Package, label: 'إدارة المخزون' },
-    { path: '/health', icon: Heart, label: 'إدارة الصحة' },
-    { path: '/financial', icon: DollarSign, label: 'الشؤون المالية' },
-    { path: '/daily-records', icon: Calendar, label: 'السجلات اليومية' },
-    { path: '/sales', icon: ShoppingCart, label: 'إدارة المبيعات' },
-    { path: '/employees', icon: Users, label: 'إدارة الموظفين' },
-    { path: '/reports', icon: BarChart2, label: 'التقارير' },
-    { path: '/settings', icon: Settings, label: 'الإعدادات' },
+    { path: '/dashboard', icon: '/icons/home.svg', label: 'لوحة التحكم' },
+    { path: '/cycles', icon: '/icons/layers.svg', label: 'إدارة الدورات' },
+    { path: '/inventory', icon: '/icons/package.svg', label: 'إدارة المخزون' },
+    { path: '/health', icon: '/icons/heart.svg', label: 'إدارة الصحة' },
+    { path: '/financial', icon: '/icons/dollar.svg', label: 'الشؤون المالية' },
+    { path: '/daily-records', icon: '/icons/calendar.svg', label: 'السجلات اليومية' },
+    { path: '/sales', icon: '/icons/shopping-cart.svg', label: 'إدارة المبيعات' },
+    { path: '/employees', icon: '/icons/users.svg', label: 'إدارة الموظفين' },
+    { path: '/reports', icon: '/icons/bar-chart.svg', label: 'التقارير' },
+    { path: '/settings', icon: '/icons/settings.svg', label: 'الإعدادات' },
   ]
 
   return (
@@ -45,7 +29,7 @@ const Layout = ({ children }) => {
                 onClick={() => setSidebarOpen(!sidebarOpen)}
                 className="p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 lg:hidden"
               >
-                {sidebarOpen ? <X size={24} /> : <Menu size={24} />}
+                {sidebarOpen ? '✕' : '☰'}
               </button>
               
               <div className="flex items-center mr-4">
@@ -58,13 +42,13 @@ const Layout = ({ children }) => {
 
             <div className="flex items-center space-x-4 space-x-reverse">
               <button className="relative p-2 text-gray-400 hover:text-gray-500">
-                <Bell size={22} />
+                <img src="/icons/bell.svg" alt="إشعارات" className="h-6 w-6" />
                 <span className="absolute top-1 left-1 h-2 w-2 bg-red-500 rounded-full"></span>
               </button>
               
               <div className="flex items-center space-x-3 space-x-reverse">
                 <div className="h-10 w-10 bg-gray-200 rounded-full flex items-center justify-center">
-                  <User size={20} className="text-gray-600" />
+                  <img src="/icons/user.svg" alt="مستخدم" className="h-6 w-6 text-gray-600" />
                 </div>
                 <div className="hidden md:block">
                   <p className="text-sm font-medium text-gray-700">مدير المزرعة</p>
@@ -94,18 +78,11 @@ const Layout = ({ children }) => {
               }`}
               onClick={() => setSidebarOpen(false)}
             >
-              <item.icon size={20} className="ml-3" />
+              <img src={item.icon} alt={item.label} className="h-5 w-5 ml-3" />
               <span>{item.label}</span>
             </Link>
           ))}
         </nav>
-
-        <div className="absolute bottom-0 w-full p-4 border-t">
-          <div className="bg-blue-50 p-4 rounded-lg">
-            <p className="text-sm text-blue-800 font-medium">إحصائيات اليوم</p>
-            <p className="text-xs text-blue-600 mt-1">3 مهام معلقة</p>
-          </div>
-        </div>
       </aside>
 
       {/* المحتوى الرئيسي */}
