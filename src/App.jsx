@@ -12,7 +12,7 @@ import SalesManagement from './components/SalesManagement'
 import EmployeesManagement from './components/EmployeesManagement'
 import Reports from './components/Reports'
 import Settings from './components/Settings'
-import NotFound from './components/NotFound'
+//import NotFound from './components/NotFound'
 
 function App() {
   const [showSplash, setShowSplash] = useState(true)
