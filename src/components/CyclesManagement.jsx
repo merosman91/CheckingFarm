@@ -1,23 +1,18 @@
 import React, { useState, useEffect } from 'react'
-import { 
-  Plus, 
-  Edit, 
-  Trash2, 
-  Eye,
-  PlayCircle,
-  PauseCircle,
-  Calendar,
-  Users,
-  TrendingUp,
-  Filter,
-  Download
-} from 'lucide-react'
 
 const CyclesManagement = () => {
   const [cycles, setCycles] = useState([])
   const [showNewCycle, setShowNewCycle] = useState(false)
   const [selectedCycle, setSelectedCycle] = useState(null)
   const [showDetails, setShowDetails] = useState(false)
+  const [editingCycle, setEditingCycle] = useState(null)
+  const [editForm, setEditForm] = useState({
+    name: '',
+    birdsCount: 0,
+    breed: '',
+    houseNumber: '',
+    notes: ''
+  })
 
   const [newCycle, setNewCycle] = useState({
     name: '',
@@ -42,7 +37,7 @@ const CyclesManagement = () => {
 
   const handleCreateCycle = () => {
     const cycle = {
-      id: cycles.length + 1,
+      id: Date.now(),
       ...newCycle,
       status: 'active',
       currentBirds: newCycle.birdsCount,
@@ -51,7 +46,8 @@ const CyclesManagement = () => {
       medicinesUsed: [],
       sales: [],
       expenses: [],
-      createdAt: new Date().toISOString()
+      createdAt: new Date().toISOString(),
+      conversionRate: 1.8
     }
     
     setCycles([...cycles, cycle])
@@ -67,12 +63,49 @@ const CyclesManagement = () => {
     })
   }
 
+  const handleEditCycle = (cycle) => {
+    setEditingCycle(cycle)
+    setEditForm({
+      name: cycle.name,
+      birdsCount: cycle.birdsCount,
+      breed: cycle.breed,
+      houseNumber: cycle.houseNumber,
+      notes: cycle.notes || ''
+    })
+  }
+
+  const handleSaveEdit = () => {
+    if (editingCycle) {
+      setCycles(cycles.map(cycle => 
+        cycle.id === editingCycle.id 
+          ? { ...cycle, ...editForm, currentBirds: editForm.birdsCount }
+          : cycle
+      ))
+      setEditingCycle(null)
+      setEditForm({
+        name: '',
+        birdsCount: 0,
+        breed: '',
+        houseNumber: '',
+        notes: ''
+      })
+    }
+  }
+
   const handleToggleStatus = (id) => {
-    setCycles(cycles.map(cycle => 
-      cycle.id === id 
-        ? { ...cycle, status: cycle.status === 'active' ? 'inactive' : 'active' }
-        : cycle
-    ))
+    setCycles(cycles.map(cycle => {
+      if (cycle.id === id) {
+        const updatedCycle = { 
+          ...cycle, 
+          status: cycle.status === 'active' ? 'inactive' : 'active'
+        }
+        if (updatedCycle.status === 'inactive') {
+          updatedCycle.endDate = new Date().toISOString().split('T')[0]
+        }
+        return updatedCycle
+      }
+      return cycle
+    }))
   }
 
   const handleDeleteCycle = (id) => {
@@ -92,15 +125,12 @@ const CyclesManagement = () => {
           <h1 className="text-2xl md:text-3xl font-bold text-gray-800">إدارة الدورات</h1>
           <p className="text-gray-600 mt-1">إدارة دورات تربية الدواجن</p>
         </div>
-        <div className="flex items-center space-x-3 space-x-reverse">
-          <button 
-            className="btn-secondary flex items-center"
-            onClick={() => setShowNewCycle(true)}
-          >
-            <Plus size={18} className="ml-2" />
-            دورة جديدة
-          </button>
-        </div>
+        <button 
+          className="btn-secondary"
+          onClick={() => setShowNewCycle(true)}
+        >
+          + دورة جديدة
+        </button>
       </div>
 
       {/* بطاقات الإحصائيات */}
@@ -117,7 +147,7 @@ const CyclesManagement = () => {
               </p>
             </div>
             <div className="p-3 rounded-lg bg-green-50">
-              <PlayCircle size={24} className="text-green-600" />
+              <img src="/icons/play.svg" alt="نشطة" className="h-6 w-6" />
             </div>
           </div>
         </div>
@@ -131,7 +161,7 @@ const CyclesManagement = () => {
               </p>
             </div>
             <div className="p-3 rounded-lg bg-gray-50">
-              <PauseCircle size={24} className="text-gray-600" />
+              <img src="/icons/pause.svg" alt="متوقفة" className="h-6 w-6" />
             </div>
           </div>
         </div>
@@ -146,7 +176,7 @@ const CyclesManagement = () => {
               <p className="text-sm text-gray-500 mt-1">من بداية العام</p>
             </div>
             <div className="p-3 rounded-lg bg-blue-50">
-              <TrendingUp size={24} className="text-blue-600" />
+              <img src="/icons/trending-up.svg" alt="إجمالي" className="h-6 w-6" />
             </div>
           </div>
         </div>
@@ -156,65 +186,46 @@ const CyclesManagement = () => {
       <div className="card">
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-xl font-semibold text-gray-800">الدورات النشطة</h2>
-          <div className="flex space-x-2 space-x-reverse">
-            <button className="p-2 border border-gray-300 rounded-lg hover:bg-gray-50">
-              <Filter size={20} className="text-gray-600" />
-            </button>
-            <button className="p-2 border border-gray-300 rounded-lg hover:bg-gray-50">
-              <Download size={20} className="text-gray-600" />
-            </button>
-          </div>
         </div>
 
         {activeCycles.length === 0 ? (
           <div className="text-center py-12">
-            <Users className="mx-auto h-12 w-12 text-gray-400" />
+            <div className="h-12 w-12 bg-gray-200 rounded-full flex items-center justify-center mx-auto mb-4">
+              <img src="/icons/users.svg" alt="لا توجد دورات" className="h-6 w-6" />
+            </div>
             <h3 className="mt-4 text-lg font-medium text-gray-900">لا توجد دورات نشطة</h3>
             <p className="mt-2 text-gray-500">ابدأ بإضافة دورة جديدة لتربية الدواجن.</p>
             <button 
               className="mt-4 btn-secondary"
               onClick={() => setShowNewCycle(true)}
             >
-              <Plus size={18} className="ml-2" />
-              إضافة دورة جديدة
+              + إضافة دورة جديدة
             </button>
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
+            <table className="min-w-full">
               <thead className="bg-gray-50">
                 <tr>
-                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    اسم الدورة
-                  </th>
-                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    تاريخ البدء
-                  </th>
-                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    عدد الطيور
-                  </th>
-                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    السلالة
-                  </th>
-                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    الحالة
-                  </th>
-                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    الإجراءات
-                  </th>
+                  <th className="px-4 py-3 text-right text-sm font-medium text-gray-700">اسم الدورة</th>
+                  <th className="px-4 py-3 text-right text-sm font-medium text-gray-700">تاريخ البدء</th>
+                  <th className="px-4 py-3 text-right text-sm font-medium text-gray-700">عدد الطيور</th>
+                  <th className="px-4 py-3 text-right text-sm font-medium text-gray-700">السلالة</th>
+                  <th className="px-4 py-3 text-right text-sm font-medium text-gray-700">الحالة</th>
+                  <th className="px-4 py-3 text-right text-sm font-medium text-gray-700">الإجراءات</th>
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
                 {activeCycles.map((cycle) => (
-                  <tr key={cycle.id} className="hover:bg-gray-50 transition-colors">
-                    <td className="px-6 py-4 whitespace-nowrap">
+                  <tr key={cycle.id}>
+                    <td className="px-4 py-3">
                       <div className="font-medium text-gray-900">{cycle.name}</div>
                       <div className="text-sm text-gray-500">بيت رقم: {cycle.houseNumber}</div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    <td className="px-4 py-3 text-sm text-gray-900">
                       {cycle.startDate}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="px-4 py-3">
                       <div className="font-medium text-gray-900">
                         {cycle.currentBirds.toLocaleString()}
                       </div>
@@ -222,39 +233,36 @@ const CyclesManagement = () => {
                         من {cycle.birdsCount.toLocaleString()}
                       </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    <td className="px-4 py-3 text-sm text-gray-900">
                       {cycle.breed}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className="px-3 py-1 text-xs rounded-full bg-green-100 text-green-800">
+                    <td className="px-4 py-3">
+                      <span className="px-2 py-1 text-xs rounded-full bg-green-100 text-green-800">
                         نشطة
                       </span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                    <td className="px-4 py-3">
                       <div className="flex space-x-2 space-x-reverse">
                         <button 
-                          className="text-blue-600 hover:text-blue-900"
+                          className="text-blue-600 hover:text-blue-900 text-sm"
                           onClick={() => {
                             setSelectedCycle(cycle)
                             setShowDetails(true)
                           }}
                         >
-                          <Eye size={18} />
-                        </button>
-                        <button className="text-yellow-600 hover:text-yellow-900">
-                          <Edit size={18} />
+                          عرض
                         </button>
                         <button 
-                          className="text-red-600 hover:text-red-900"
-                          onClick={() => handleToggleStatus(cycle.id)}
+                          className="text-yellow-600 hover:text-yellow-900 text-sm"
+                          onClick={() => handleEditCycle(cycle)}
                         >
-                          <PauseCircle size={18} />
+                          تعديل
                         </button>
                         <button 
-                          className="text-red-600 hover:text-red-900"
+                          className="text-red-600 hover:text-red-900 text-sm"
                           onClick={() => handleDeleteCycle(cycle.id)}
                         >
-                          <Trash2 size={18} />
+                          حذف
                         </button>
                       </div>
                     </td>
@@ -266,61 +274,132 @@ const CyclesManagement = () => {
         )}
       </div>
 
+      {/* تعديل الدورة */}
+      {editingCycle && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-xl shadow-2xl max-w-md w-full">
+            <div className="p-6">
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-xl font-bold text-gray-800">تعديل الدورة</h2>
+                <button
+                  onClick={() => setEditingCycle(null)}
+                  className="text-gray-400 hover:text-gray-600"
+                >
+                  ✕
+                </button>
+              </div>
+
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    اسم الدورة
+                  </label>
+                  <input
+                    type="text"
+                    className="input-field"
+                    value={editForm.name}
+                    onChange={(e) => setEditForm({...editForm, name: e.target.value})}
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    عدد الطيور
+                  </label>
+                  <input
+                    type="number"
+                    className="input-field"
+                    value={editForm.birdsCount}
+                    onChange={(e) => setEditForm({...editForm, birdsCount: parseInt(e.target.value) || 0})}
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    السلالة
+                  </label>
+                  <input
+                    type="text"
+                    className="input-field"
+                    value={editForm.breed}
+                    onChange={(e) => setEditForm({...editForm, breed: e.target.value})}
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    رقم البيت
+                  </label>
+                  <input
+                    type="text"
+                    className="input-field"
+                    value={editForm.houseNumber}
+                    onChange={(e) => setEditForm({...editForm, houseNumber: e.target.value})}
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    ملاحظات
+                  </label>
+                  <textarea
+                    className="input-field h-24"
+                    value={editForm.notes}
+                    onChange={(e) => setEditForm({...editForm, notes: e.target.value})}
+                  />
+                </div>
+
+                <div className="flex justify-end space-x-3 space-x-reverse pt-4 border-t">
+                  <button
+                    onClick={() => setEditingCycle(null)}
+                    className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
+                  >
+                    إلغاء
+                  </button>
+                  <button
+                    onClick={handleSaveEdit}
+                    className="btn-primary px-4 py-2"
+                  >
+                    حفظ التعديلات
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* الدورات المنتهية */}
       {inactiveCycles.length > 0 && (
         <div className="card">
-          <h2 className="text-xl font-semibold text-gray-800 mb-6">الدورات المنتهية</h2>
+          <h2 className="text-xl font-semibold text-gray-800 mb-4">الدورات المنتهية</h2>
           <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
+            <table className="min-w-full">
               <thead className="bg-gray-50">
                 <tr>
-                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    اسم الدورة
-                  </th>
-                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    الفترة
-                  </th>
-                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    الإنتاج
-                  </th>
-                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    الإيرادات
-                  </th>
-                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    الإجراءات
-                  </th>
+                  <th className="px-4 py-3 text-right text-sm font-medium text-gray-700">اسم الدورة</th>
+                  <th className="px-4 py-3 text-right text-sm font-medium text-gray-700">الفترة</th>
+                  <th className="px-4 py-3 text-right text-sm font-medium text-gray-700">عدد الطيور</th>
+                  <th className="px-4 py-3 text-right text-sm font-medium text-gray-700">الإيرادات</th>
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
                 {inactiveCycles.slice(0, 5).map((cycle) => (
-                  <tr key={cycle.id} className="hover:bg-gray-50 transition-colors">
-                    <td className="px-6 py-4 whitespace-nowrap">
+                  <tr key={cycle.id}>
+                    <td className="px-4 py-3">
                       <div className="font-medium text-gray-900">{cycle.name}</div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    <td className="px-4 py-3 text-sm text-gray-900">
                       {cycle.startDate} - {cycle.endDate || 'حالياً'}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="px-4 py-3">
                       <div className="font-medium text-gray-900">
                         {cycle.currentBirds?.toLocaleString() || 0} طائر
                       </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="px-4 py-3">
                       <div className="font-medium text-green-600">
-                        {(cycle.sales?.reduce((sum, s) => sum + s.amount, 0) || 0).toLocaleString()} ر.س
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                      <div className="flex space-x-2 space-x-reverse">
-                        <button className="text-blue-600 hover:text-blue-900">
-                          <Eye size={18} />
-                        </button>
-                        <button 
-                          className="text-green-600 hover:text-green-900"
-                          onClick={() => handleToggleStatus(cycle.id)}
-                        >
-                          <PlayCircle size={18} />
-                        </button>
+                        {(cycle.sales?.reduce((sum, s) => sum + s.amount, 0) || 0).toLocaleString()} ج.س
                       </div>
                     </td>
                   </tr>
@@ -334,10 +413,10 @@ const CyclesManagement = () => {
       {/* نافذة إنشاء دورة جديدة */}
       {showNewCycle && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+          <div className="bg-white rounded-xl shadow-2xl max-w-md w-full">
             <div className="p-6">
               <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-bold text-gray-800">دورة جديدة</h2>
+                <h2 className="text-xl font-bold text-gray-800">دورة جديدة</h2>
                 <button
                   onClick={() => setShowNewCycle(false)}
                   className="text-gray-400 hover:text-gray-600"
@@ -346,68 +425,63 @@ const CyclesManagement = () => {
                 </button>
               </div>
 
-              <div className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      اسم الدورة *
-                    </label>
-                    <input
-                      type="text"
-                      className="input-field"
-                      value={newCycle.name}
-                      onChange={(e) => setNewCycle({...newCycle, name: e.target.value})}
-                      placeholder="مثال: الدورة الشتوية 2024"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      تاريخ البدء *
-                    </label>
-                    <input
-                      type="date"
-                      className="input-field"
-                      value={newCycle.startDate}
-                      onChange={(e) => setNewCycle({...newCycle, startDate: e.target.value})}
-                    />
-                  </div>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    اسم الدورة
+                  </label>
+                  <input
+                    type="text"
+                    className="input-field"
+                    value={newCycle.name}
+                    onChange={(e) => setNewCycle({...newCycle, name: e.target.value})}
+                    placeholder="مثال: الدورة الشتوية 2024"
+                  />
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      عدد الطيور *
-                    </label>
-                    <input
-                      type="number"
-                      className="input-field"
-                      value={newCycle.birdsCount}
-                      onChange={(e) => setNewCycle({...newCycle, birdsCount: parseInt(e.target.value) || 0})}
-                      min="1"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      السلالة *
-                    </label>
-                    <select
-                      className="input-field"
-                      value={newCycle.breed}
-                      onChange={(e) => setNewCycle({...newCycle, breed: e.target.value})}
-                    >
-                      <option value="">اختر السلالة</option>
-                      <option value="لوجهورن">لوجهورن</option>
-                      <option value="هاي لاين">هاي لاين</option>
-                      <option value="روس">روس</option>
-                      <option value="كوب">كوب</option>
-                      <option value="أخرى">أخرى</option>
-                    </select>
-                  </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    تاريخ البدء
+                  </label>
+                  <input
+                    type="date"
+                    className="input-field"
+                    value={newCycle.startDate}
+                    onChange={(e) => setNewCycle({...newCycle, startDate: e.target.value})}
+                  />
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    عدد الطيور
+                  </label>
+                  <input
+                    type="number"
+                    className="input-field"
+                    value={newCycle.birdsCount}
+                    onChange={(e) => setNewCycle({...newCycle, birdsCount: parseInt(e.target.value) || 0})}
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    السلالة
+                  </label>
+                  <select
+                    className="input-field"
+                    value={newCycle.breed}
+                    onChange={(e) => setNewCycle({...newCycle, breed: e.target.value})}
+                  >
+                    <option value="">اختر السلالة</option>
+                    <option value="لوجهورن">لوجهورن</option>
+                    <option value="هاي لاين">هاي لاين</option>
+                    <option value="روس">روس</option>
+                    <option value="كوب">كوب</option>
+                    <option value="أخرى">أخرى</option>
+                  </select>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       رقم البيت
@@ -417,7 +491,6 @@ const CyclesManagement = () => {
                       className="input-field"
                       value={newCycle.houseNumber}
                       onChange={(e) => setNewCycle({...newCycle, houseNumber: e.target.value})}
-                      placeholder="مثال: بيت 1"
                     />
                   </div>
 
@@ -430,7 +503,6 @@ const CyclesManagement = () => {
                       className="input-field"
                       value={newCycle.expectedDuration}
                       onChange={(e) => setNewCycle({...newCycle, expectedDuration: parseInt(e.target.value) || 45})}
-                      min="1"
                     />
                   </div>
                 </div>
@@ -440,24 +512,22 @@ const CyclesManagement = () => {
                     ملاحظات
                   </label>
                   <textarea
-                    className="input-field h-32"
+                    className="input-field h-24"
                     value={newCycle.notes}
                     onChange={(e) => setNewCycle({...newCycle, notes: e.target.value})}
-                    placeholder="أي ملاحظات إضافية..."
                   />
                 </div>
 
-                <div className="flex justify-end space-x-3 space-x-reverse pt-6 border-t">
+                <div className="flex justify-end space-x-3 space-x-reverse pt-4 border-t">
                   <button
                     onClick={() => setShowNewCycle(false)}
-                    className="px-6 py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
+                    className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
                   >
                     إلغاء
                   </button>
                   <button
                     onClick={handleCreateCycle}
-                    className="btn-primary px-6 py-3"
-                    disabled={!newCycle.name || !newCycle.birdsCount || !newCycle.breed}
+                    className="btn-primary px-4 py-2"
                   >
                     بدء الدورة
                   </button>
@@ -471,12 +541,12 @@ const CyclesManagement = () => {
       {/* عرض تفاصيل الدورة */}
       {showDetails && selectedCycle && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+          <div className="bg-white rounded-xl shadow-2xl max-w-md w-full">
             <div className="p-6">
               <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-bold text-gray-800">{selectedCycle.name}</h2>
+                <h2 className="text-xl font-bold text-gray-800">{selectedCycle.name}</h2>
                 <div className="flex space-x-2 space-x-reverse">
-                  <span className={`px-3 py-1 text-xs rounded-full ${
+                  <span className={`px-2 py-1 text-xs rounded-full ${
                     selectedCycle.status === 'active' 
                       ? 'bg-green-100 text-green-800' 
                       : 'bg-gray-100 text-gray-800'
@@ -492,91 +562,70 @@ const CyclesManagement = () => {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                {/* المعلومات الأساسية */}
-                <div>
-                  <h3 className="text-lg font-medium text-gray-800 mb-4">المعلومات الأساسية</h3>
-                  <div className="space-y-4">
-                    <div className="flex justify-between border-b pb-2">
-                      <span className="text-gray-600">تاريخ البدء:</span>
-                      <span className="font-medium">{selectedCycle.startDate}</span>
-                    </div>
-                    <div className="flex justify-between border-b pb-2">
-                      <span className="text-gray-600">عدد الطيور:</span>
-                      <span className="font-medium">{selectedCycle.currentBirds?.toLocaleString()} من {selectedCycle.birdsCount?.toLocaleString()}</span>
-                    </div>
-                    <div className="flex justify-between border-b pb-2">
-                      <span className="text-gray-600">السلالة:</span>
-                      <span className="font-medium">{selectedCycle.breed}</span>
-                    </div>
-                    <div className="flex justify-between border-b pb-2">
-                      <span className="text-gray-600">رقم البيت:</span>
-                      <span className="font-medium">{selectedCycle.houseNumber}</span>
-                    </div>
-                    <div className="flex justify-between border-b pb-2">
-                      <span className="text-gray-600">المدة المتوقعة:</span>
-                      <span className="font-medium">{selectedCycle.expectedDuration} يوم</span>
-                    </div>
+              <div className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <p className="text-sm text-gray-600">تاريخ البدء</p>
+                    <p className="font-medium">{selectedCycle.startDate}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-600">عدد الطيور</p>
+                    <p className="font-medium">{selectedCycle.currentBirds?.toLocaleString() || 0}</p>
                   </div>
                 </div>
 
-                {/* الإحصائيات */}
-                <div>
-                  <h3 className="text-lg font-medium text-gray-800 mb-4">الإحصائيات</h3>
-                  <div className="space-y-4">
-                    <div className="p-4 bg-blue-50 rounded-lg">
-                      <p className="text-sm text-blue-600">معدل النفوق</p>
-                      <p className="text-2xl font-bold text-blue-700 mt-1">
-                        {selectedCycle.mortality ? 
-                          ((selectedCycle.mortality / selectedCycle.birdsCount) * 100).toFixed(1) : '0.0'}%
-                      </p>
-                    </div>
-                    <div className="p-4 bg-green-50 rounded-lg">
-                      <p className="text-sm text-green-600">استهلاك العلف</p>
-                      <p className="text-2xl font-bold text-green-700 mt-1">
-                        {selectedCycle.feedConsumed?.toLocaleString() || 0} كغ
-                      </p>
-                    </div>
-                    <div className="p-4 bg-purple-50 rounded-lg">
-                      <p className="text-sm text-purple-600">معدل التحويل</p>
-                      <p className="text-2xl font-bold text-purple-700 mt-1">
-                        {selectedCycle.conversionRate || '1.8'}
-                      </p>
-                    </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <p className="text-sm text-gray-600">السلالة</p>
+                    <p className="font-medium">{selectedCycle.breed}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-600">رقم البيت</p>
+                    <p className="font-medium">{selectedCycle.houseNumber}</p>
                   </div>
                 </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="p-3 bg-blue-50 rounded-lg">
+                    <p className="text-sm text-blue-600">معدل النفوق</p>
+                    <p className="text-lg font-bold text-blue-700">
+                      {selectedCycle.mortality ? 
+                        ((selectedCycle.mortality / selectedCycle.birdsCount) * 100).toFixed(1) : '0.0'}%
+                    </p>
+                  </div>
+                  <div className="p-3 bg-green-50 rounded-lg">
+                    <p className="text-sm text-green-600">استهلاك العلف</p>
+                    <p className="text-lg font-bold text-green-700">
+                      {selectedCycle.feedConsumed?.toLocaleString() || 0} كغ
+                    </p>
+                  </div>
+                </div>
+
+                {selectedCycle.notes && (
+                  <div>
+                    <p className="text-sm text-gray-600 mb-2">ملاحظات</p>
+                    <div className="p-3 bg-gray-50 rounded-lg">
+                      <p className="text-gray-700">{selectedCycle.notes}</p>
+                    </div>
+                  </div>
+                )}
               </div>
 
-              {/* الملاحظات */}
-              {selectedCycle.notes && (
-                <div className="mt-8">
-                  <h3 className="text-lg font-medium text-gray-800 mb-4">ملاحظات</h3>
-                  <div className="p-4 bg-gray-50 rounded-lg">
-                    <p className="text-gray-700">{selectedCycle.notes}</p>
-                  </div>
-                </div>
-              )}
-
-              {/* أزرار الإجراءات */}
-              <div className="mt-8 flex justify-end space-x-3 space-x-reverse pt-6 border-t">
+              <div className="flex justify-end space-x-3 space-x-reverse pt-6 border-t mt-6">
                 <button
                   onClick={() => setShowDetails(false)}
-                  className="px-6 py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
+                  className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
                 >
                   إغلاق
                 </button>
                 <button
-                  onClick={() => handleToggleStatus(selectedCycle.id)}
-                  className={`px-6 py-3 rounded-lg transition-colors ${
-                    selectedCycle.status === 'active'
-                      ? 'bg-yellow-100 text-yellow-800 hover:bg-yellow-200'
-                      : 'bg-green-100 text-green-800 hover:bg-green-200'
-                  }`}
+                  onClick={() => {
+                    handleToggleStatus(selectedCycle.id)
+                    setShowDetails(false)
+                  }}
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
                 >
                   {selectedCycle.status === 'active' ? 'إيقاف الدورة' : 'تفعيل الدورة'}
-                </button>
-                <button className="btn-primary px-6 py-3">
-                  تعديل الدورة
                 </button>
               </div>
             </div>
