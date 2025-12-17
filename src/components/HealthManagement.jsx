@@ -1,21 +1,4 @@
 import React, { useState, useEffect } from 'react'
-import { 
-  Plus, 
-  Heart, 
-  Activity,
-  AlertTriangle,
-  Calendar,
-  Clock,
-  CheckCircle,
-  XCircle,
-  Search,
-  Filter,
-  Download,
-  Edit,
-  Trash2,
-  Syringe,
-  Thermometer
-} from 'lucide-react'
 
 const HealthManagement = () => {
   const [vaccinations, setVaccinations] = useState([])
@@ -111,6 +94,16 @@ const HealthManagement = () => {
   const pendingVaccinations = vaccinations.filter(v => v.status === 'pending')
   const upcomingTreatments = treatments.filter(t => new Date(t.date) > new Date())
 
+  // دالة مساعدة لعرض الأيقونات
+  const Icon = ({ name, className = "w-5 h-5", ...props }) => (
+    <img 
+      src={`/icons/${name}.svg`} 
+      alt={name}
+      className={className}
+      {...props}
+    />
+  )
+
   return (
     <div className="space-y-6">
       {/* رأس الصفحة */}
@@ -124,7 +117,7 @@ const HealthManagement = () => {
             className="btn-secondary flex items-center"
             onClick={() => setShowNewRecord(true)}
           >
-            <Plus size={18} className="ml-2" />
+            <Icon name="plus" className="w-4 h-4 ml-2" />
             تسجيل جديد
           </button>
         </div>
@@ -141,7 +134,7 @@ const HealthManagement = () => {
               </p>
             </div>
             <div className="p-3 rounded-lg bg-blue-50">
-              <Syringe size={24} className="text-blue-600" />
+              <Icon name="syringe" className="w-6 h-6 text-blue-600" />
             </div>
           </div>
         </div>
@@ -155,7 +148,7 @@ const HealthManagement = () => {
               </p>
             </div>
             <div className="p-3 rounded-lg bg-green-50">
-              <Heart size={24} className="text-green-600" />
+              <Icon name="heart" className="w-6 h-6 text-green-600" />
             </div>
           </div>
         </div>
@@ -169,7 +162,7 @@ const HealthManagement = () => {
               </p>
             </div>
             <div className="p-3 rounded-lg bg-yellow-50">
-              <AlertTriangle size={24} className="text-yellow-600" />
+              <Icon name="alert-triangle" className="w-6 h-6 text-yellow-600" />
             </div>
           </div>
         </div>
@@ -184,7 +177,7 @@ const HealthManagement = () => {
               <p className="text-sm text-gray-500 mt-1">من إجمالي الطيور</p>
             </div>
             <div className="p-3 rounded-lg bg-red-50">
-              <Activity size={24} className="text-red-600" />
+              <Icon name="activity" className="w-6 h-6 text-red-600" />
             </div>
           </div>
         </div>
@@ -194,10 +187,10 @@ const HealthManagement = () => {
       <div className="border-b border-gray-200">
         <nav className="flex space-x-8 space-x-reverse">
           {[
-            { id: 'vaccinations', label: 'التطعيمات', icon: Syringe },
-            { id: 'treatments', label: 'العلاجات', icon: Heart },
-            { id: 'diseases', label: 'تقارير الأمراض', icon: AlertTriangle },
-            { id: 'alerts', label: 'التنبيهات', icon: Clock }
+            { id: 'vaccinations', label: 'التطعيمات', icon: 'syringe' },
+            { id: 'treatments', label: 'العلاجات', icon: 'heart' },
+            { id: 'diseases', label: 'تقارير الأمراض', icon: 'alert-triangle' },
+            { id: 'alerts', label: 'التنبيهات', icon: 'clock' }
           ].map((tab) => (
             <button
               key={tab.id}
@@ -208,7 +201,7 @@ const HealthManagement = () => {
                   : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
               }`}
             >
-              <tab.icon size={18} className="ml-2" />
+              <Icon name={tab.icon} className="w-4 h-4 ml-2" />
               {tab.label}
               {tab.id === 'alerts' && pendingVaccinations.length > 0 && (
                 <span className="mr-2 bg-red-100 text-red-800 text-xs px-2 py-1 rounded-full">
@@ -228,17 +221,17 @@ const HealthManagement = () => {
               <h2 className="text-xl font-semibold text-gray-800">جدول التطعيمات</h2>
               <div className="flex space-x-2 space-x-reverse">
                 <button className="p-2 border border-gray-300 rounded-lg hover:bg-gray-50">
-                  <Filter size={20} className="text-gray-600" />
+                  <Icon name="filter" className="w-5 h-5 text-gray-600" />
                 </button>
                 <button className="p-2 border border-gray-300 rounded-lg hover:bg-gray-50">
-                  <Download size={20} className="text-gray-600" />
+                  <Icon name="download" className="w-5 h-5 text-gray-600" />
                 </button>
               </div>
             </div>
 
             {vaccinations.length === 0 ? (
               <div className="text-center py-12">
-                <Syringe className="mx-auto h-12 w-12 text-gray-400" />
+                <Icon name="syringe" className="mx-auto w-12 h-12 text-gray-400" />
                 <h3 className="mt-4 text-lg font-medium text-gray-900">لا توجد تطعيمات مسجلة</h3>
                 <p className="mt-2 text-gray-500">ابدأ بتسجيل تطعيمات جديدة للدورات النشطة.</p>
               </div>
@@ -305,10 +298,10 @@ const HealthManagement = () => {
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                           <div className="flex space-x-2 space-x-reverse">
                             <button className="text-blue-600 hover:text-blue-900">
-                              <Edit size={18} />
+                              <Icon name="edit" className="w-4 h-4" />
                             </button>
                             <button className="text-red-600 hover:text-red-900">
-                              <Trash2 size={18} />
+                              <Icon name="trash-2" className="w-4 h-4" />
                             </button>
                           </div>
                         </td>
@@ -326,7 +319,7 @@ const HealthManagement = () => {
             <h2 className="text-xl font-semibold text-gray-800 mb-6">العلاجات المستمرة</h2>
             {treatments.length === 0 ? (
               <div className="text-center py-12">
-                <Heart className="mx-auto h-12 w-12 text-gray-400" />
+                <Icon name="heart" className="mx-auto w-12 h-12 text-gray-400" />
                 <h3 className="mt-4 text-lg font-medium text-gray-900">لا توجد علاجات مسجلة</h3>
               </div>
             ) : (
@@ -341,7 +334,7 @@ const HealthManagement = () => {
                         </p>
                         <div className="flex items-center mt-2 space-x-4 space-x-reverse">
                           <span className="text-sm text-gray-500">
-                            <Calendar size={14} className="inline ml-1" />
+                            <Icon name="calendar" className="w-3 h-3 inline ml-1" />
                             {treatment.date}
                           </span>
                           <span className="text-sm text-gray-500">
@@ -437,7 +430,7 @@ const HealthManagement = () => {
                 pendingVaccinations.map((vac) => (
                   <div key={vac.id} className="p-4 border border-yellow-200 rounded-lg bg-yellow-50">
                     <div className="flex items-center">
-                      <Clock className="text-yellow-600 ml-3" size={20} />
+                      <Icon name="clock" className="w-5 h-5 text-yellow-600 ml-3" />
                       <div className="flex-1">
                         <h3 className="font-medium text-yellow-800">تطعيم معلق</h3>
                         <p className="text-sm text-yellow-700 mt-1">
@@ -452,7 +445,7 @@ const HealthManagement = () => {
                 ))
               ) : (
                 <div className="text-center py-8">
-                  <CheckCircle className="mx-auto h-12 w-12 text-green-400" />
+                  <Icon name="check-circle" className="mx-auto w-12 h-12 text-green-400" />
                   <h3 className="mt-4 text-lg font-medium text-gray-900">لا توجد تنبيهات حالية</h3>
                   <p className="mt-2 text-gray-500">جميع المهام محدثة ومكتملة.</p>
                 </div>
@@ -501,9 +494,9 @@ const HealthManagement = () => {
                 <label className="block text-sm font-medium text-gray-700 mb-3">نوع التسجيل</label>
                 <div className="grid grid-cols-3 gap-3">
                   {[
-                    { value: 'vaccination', label: 'تطعيم', icon: Syringe },
-                    { value: 'treatment', label: 'علاج', icon: Heart },
-                    { value: 'disease', label: 'مرض', icon: AlertTriangle }
+                    { value: 'vaccination', label: 'تطعيم', icon: 'syringe' },
+                    { value: 'treatment', label: 'علاج', icon: 'heart' },
+                    { value: 'disease', label: 'مرض', icon: 'alert-triangle' }
                   ].map((type) => (
                     <button
                       key={type.value}
@@ -514,7 +507,7 @@ const HealthManagement = () => {
                           : 'border-gray-300 hover:bg-gray-50'
                       }`}
                     >
-                      <type.icon size={24} className={`mb-2 ${
+                      <Icon name={type.icon} className={`w-6 h-6 mb-2 ${
                         newRecord.type === type.value ? 'text-blue-600' : 'text-gray-400'
                       }`} />
                       <span className={`font-medium ${
