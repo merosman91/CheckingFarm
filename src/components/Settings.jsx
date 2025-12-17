@@ -1,26 +1,4 @@
 import React, { useState, useEffect } from 'react'
-import { 
-  Settings as SettingsIcon,
-  User,
-  Shield,
-  Bell,
-  Database,
-  Globe,
-  Moon,
-  Sun,
-  Download,
-  Upload,
-  Save,
-  RefreshCw,
-  Key,
-  Users,
-  Building,
-  Mail,
-  Phone,
-  MapPin,
-  CreditCard,
-  AlertTriangle
-} from 'lucide-react'
 
 const Settings = () => {
   const [activeTab, setActiveTab] = useState('general')
@@ -85,6 +63,16 @@ const Settings = () => {
     localStorage.setItem('appSettings', JSON.stringify(settings))
   }, [settings])
 
+  // دالة مساعدة لعرض الأيقونات
+  const Icon = ({ name, className = "w-5 h-5", ...props }) => (
+    <img 
+      src={`/icons/${name}.svg`} 
+      alt={name}
+      className={className}
+      {...props}
+    />
+  )
+
   const handleSettingChange = (category, key, value) => {
     setSettings({
       ...settings,
@@ -148,7 +136,7 @@ const Settings = () => {
               alert('تم حفظ الإعدادات بنجاح!')
             }}
           >
-            <Save size={18} className="ml-2" />
+            <Icon name="save" className="w-4 h-4 ml-2" />
             حفظ التغييرات
           </button>
         </div>
@@ -158,12 +146,12 @@ const Settings = () => {
       <div className="border-b border-gray-200">
         <nav className="flex space-x-8 space-x-reverse">
           {[
-            { id: 'general', label: 'عام', icon: SettingsIcon },
-            { id: 'users', label: 'المستخدمين', icon: Users },
-            { id: 'notifications', label: 'الإشعارات', icon: Bell },
-            { id: 'security', label: 'الأمان', icon: Shield },
-            { id: 'backup', label: 'النسخ الاحتياطي', icon: Database },
-            { id: 'system', label: 'النظام', icon: Building }
+            { id: 'general', label: 'عام', icon: 'settings' },
+            { id: 'users', label: 'المستخدمين', icon: 'users' },
+            { id: 'notifications', label: 'الإشعارات', icon: 'bell' },
+            { id: 'security', label: 'الأمان', icon: 'shield' },
+            { id: 'backup', label: 'النسخ الاحتياطي', icon: 'database' },
+            { id: 'system', label: 'النظام', icon: 'building' }
           ].map((tab) => (
             <button
               key={tab.id}
@@ -174,7 +162,7 @@ const Settings = () => {
                   : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
               }`}
             >
-              <tab.icon size={18} className="ml-2" />
+              <Icon name={tab.icon} className="w-4 h-4 ml-2" />
               {tab.label}
             </button>
           ))}
@@ -223,7 +211,7 @@ const Settings = () => {
                       البريد الإلكتروني
                     </label>
                     <div className="relative">
-                      <Mail className="absolute right-3 top-3 text-gray-400" size={18} />
+                      <Icon name="mail" className="absolute w-4 h-4 right-3 top-3 text-gray-400" />
                       <input
                         type="email"
                         className="input-field pr-10"
@@ -238,7 +226,7 @@ const Settings = () => {
                       رقم الهاتف
                     </label>
                     <div className="relative">
-                      <Phone className="absolute right-3 top-3 text-gray-400" size={18} />
+                      <Icon name="phone" className="absolute w-4 h-4 right-3 top-3 text-gray-400" />
                       <input
                         type="tel"
                         className="input-field pr-10"
@@ -254,7 +242,7 @@ const Settings = () => {
                     العنوان
                   </label>
                   <div className="relative">
-                    <MapPin className="absolute right-3 top-3 text-gray-400" size={18} />
+                    <Icon name="map-pin" className="absolute w-4 h-4 right-3 top-3 text-gray-400" />
                     <input
                       type="text"
                       className="input-field pr-10"
@@ -346,7 +334,7 @@ const Settings = () => {
                           : 'border-gray-300 hover:bg-gray-50'
                       }`}
                     >
-                      <Sun size={24} className={`mb-2 ${
+                      <Icon name="sun" className={`w-6 h-6 mb-2 ${
                         settings.general.theme === 'light' ? 'text-blue-600' : 'text-gray-400'
                       }`} />
                       <span className={`font-medium ${
@@ -364,7 +352,7 @@ const Settings = () => {
                           : 'border-gray-300 hover:bg-gray-50'
                       }`}
                     >
-                      <Moon size={24} className={`mb-2 ${
+                      <Icon name="moon" className={`w-6 h-6 mb-2 ${
                         settings.general.theme === 'dark' ? 'text-blue-600' : 'text-gray-400'
                       }`} />
                       <span className={`font-medium ${
@@ -386,7 +374,7 @@ const Settings = () => {
               <div className="flex justify-between items-center mb-6">
                 <h2 className="text-xl font-semibold text-gray-800">إدارة المستخدمين</h2>
                 <button className="btn-secondary flex items-center">
-                  <Users size={18} className="ml-2" />
+                  <Icon name="users" className="w-4 h-4 ml-2" />
                   إضافة مستخدم
                 </button>
               </div>
@@ -418,7 +406,7 @@ const Settings = () => {
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="flex items-center">
                             <div className="h-10 w-10 bg-gray-200 rounded-full flex items-center justify-center ml-4">
-                              <User size={20} className="text-gray-600" />
+                              <Icon name="user" className="w-5 h-5 text-gray-600" />
                             </div>
                             <div>
                               <div className="font-medium text-gray-900">{user.name}</div>
@@ -450,13 +438,13 @@ const Settings = () => {
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                           <div className="flex space-x-2 space-x-reverse">
                             <button className="text-blue-600 hover:text-blue-900">
-                              <Key size={18} />
+                              <Icon name="key" className="w-4 h-4" />
                             </button>
                             <button className="text-yellow-600 hover:text-yellow-900">
-                              <Edit size={18} />
+                              <Icon name="edit" className="w-4 h-4" />
                             </button>
                             <button className="text-red-600 hover:text-red-900">
-                              <Trash2 size={18} />
+                              <Icon name="trash-2" className="w-4 h-4" />
                             </button>
                           </div>
                         </td>
@@ -557,14 +545,14 @@ const Settings = () => {
                     className="btn-secondary flex items-center"
                     onClick={handleBackup}
                   >
-                    <Download size={18} className="ml-2" />
+                    <Icon name="download" className="w-4 h-4 ml-2" />
                     نسخة احتياطية الآن
                   </button>
                   <button 
                     className="btn-primary flex items-center"
                     onClick={handleExportData}
                   >
-                    <Upload size={18} className="ml-2" />
+                    <Icon name="upload" className="w-4 h-4 ml-2" />
                     تصدير البيانات
                   </button>
                 </div>
@@ -651,7 +639,7 @@ const Settings = () => {
                           className="text-blue-600 hover:text-blue-900"
                           onClick={handleRestore}
                         >
-                          <RefreshCw size={18} />
+                          <Icon name="refresh-cw" className="w-4 h-4" />
                         </button>
                       </div>
                     </div>
@@ -663,7 +651,7 @@ const Settings = () => {
             {/* تحذير */}
             <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
               <div className="flex items-center">
-                <AlertTriangle className="text-yellow-600 ml-3" size={20} />
+                <Icon name="alert-triangle" className="w-5 h-5 text-yellow-600 ml-3" />
                 <div>
                   <p className="font-medium text-yellow-800">تنبيه هام</p>
                   <p className="text-sm text-yellow-700 mt-1">
@@ -707,22 +695,22 @@ const Settings = () => {
               <div className="space-y-4">
                 <button className="w-full p-4 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors flex items-center justify-between">
                   <span className="font-medium text-gray-800">مسح ذاكرة التخزين المؤقت</span>
-                  <RefreshCw size={18} className="text-gray-400" />
+                  <Icon name="refresh-cw" className="w-4 h-4 text-gray-400" />
                 </button>
 
                 <button className="w-full p-4 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors flex items-center justify-between">
                   <span className="font-medium text-gray-800">فحص قاعدة البيانات</span>
-                  <Database size={18} className="text-gray-400" />
+                  <Icon name="database" className="w-4 h-4 text-gray-400" />
                 </button>
 
                 <button className="w-full p-4 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors flex items-center justify-between">
                   <span className="font-medium text-gray-800">سجلات النظام</span>
-                  <FileText size={18} className="text-gray-400" />
+                  <Icon name="file-text" className="w-4 h-4 text-gray-400" />
                 </button>
 
                 <button className="w-full p-4 border border-red-300 rounded-lg hover:bg-red-50 transition-colors flex items-center justify-between text-red-600">
                   <span className="font-medium">إعادة تعيين النظام</span>
-                  <AlertTriangle size={18} />
+                  <Icon name="alert-triangle" className="w-4 h-4" />
                 </button>
               </div>
             </div>
