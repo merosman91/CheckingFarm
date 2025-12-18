@@ -6,16 +6,16 @@ const Layout = ({ children }) => {
   const location = useLocation()
 
   const menuItems = [
-    { path: '/dashboard', icon: '/public/icons/home.svg', label: 'لوحة التحكم' },
-    { path: '/cycles', icon: '/public/icons/layers.svg', label: 'إدارة الدورات' },
-    { path: '/inventory', icon: '/public/icons/package.svg', label: 'إدارة المخزون' },
-    { path: '/health', icon: '/public/icons/heart.svg', label: 'إدارة الصحة' },
-    { path: '/financial', icon: '/public/icons/dollar.svg', label: 'الشؤون المالية' },
-    { path: '/daily-records', icon: '/public/icons/calendar.svg', label: 'السجلات اليومية' },
-    { path: '/sales', icon: '/public/icons/shopping-cart.svg', label: 'إدارة المبيعات' },
-    { path: '/employees', icon: '/public/icons/users.svg', label: 'إدارة الموظفين' },
-    { path: '/reports', icon: '/public/icons/bar-chart.svg', label: 'التقارير' },
-    { path: '/settings', icon: '/public/icons/settings.svg', label: 'الإعدادات' },
+    { path: '/dashboard', icon: '/icons/home.svg', label: 'لوحة التحكم' },
+    { path: '/cycles', icon: '/icons/layers.svg', label: 'إدارة الدورات' },
+    { path: '/inventory', icon: '/icons/package.svg', label: 'إدارة المخزون' },
+    { path: '/health', icon: '/icons/heart.svg', label: 'إدارة الصحة' },
+    { path: '/financial', icon: '/icons/dollar.svg', label: 'الشؤون المالية' },
+    { path: '/daily-records', icon: '/icons/calendar.svg', label: 'السجلات اليومية' },
+    { path: '/sales', icon: '/icons/shopping-cart.svg', label: 'إدارة المبيعات' },
+    { path: '/employees', icon: '/icons/users.svg', label: 'إدارة الموظفين' },
+    { path: '/reports', icon: '/icons/bar-chart.svg', label: 'التقارير' },
+    { path: '/settings', icon: '/icons/settings.svg', label: 'الإعدادات' },
   ]
 
   return (
